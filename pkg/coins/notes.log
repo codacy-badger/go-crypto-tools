@@ -1,0 +1,11 @@
+XSN:
+- maybe ask for unified naming for the "transactions" attribute in json for `Block`
+
+GRPH:
+- IP request limit (40s wait seems fine)
+- decrypt for GetTransactionById does not do anything
+
+
+MC:
+- getrawtransaction?decrypt=1&txId=407d3c8c0c1cecadc9dc50626ef0aef70159278283a46590287599e9d8b9b0bd works not
+- txId=407d3c8c0c1cecadc9dc50626ef0aef70159278283a46590287599e9d8b9b0bd&decrypt=1& works ??
