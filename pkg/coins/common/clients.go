@@ -3,16 +3,18 @@ package common
 import (
 	"github.com/cwntr/crypto-sdk/pkg/coins/grph"
 	"github.com/cwntr/crypto-sdk/pkg/coins/mc"
+	"github.com/dnaeon/go-vcr/recorder"
 )
 
 var (
 	clients map[string]interface{}
 )
 
-func InitClients() {
+
+func InitClients(rec *recorder.Recorder) {
 	clients = make(map[string]interface{}, 2)
-	clients[NameGRPH] = grph.InitApi(grph.APIUrl)
-	clients[NameMC] = mc.InitApi(mc.APIUrl)
+	clients[NameGRPH] = grph.InitApi(grph.APIUrl, rec)
+	clients[NameMC] = mc.InitApi(mc.APIUrl, rec)
 }
 
 func GetClientByName(name string) interface{} {

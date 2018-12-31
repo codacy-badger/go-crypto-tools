@@ -15,23 +15,16 @@ type LastTx struct {
 	Address string
 }
 
-type StakeReward struct {
-	Address string
-	Amount  float64
-	Time    time.Time
-}
-
-type MasternodeReward struct {
+type Reward struct {
 	Address string
 	Amount  float64
 	Time    time.Time
 }
 
 type AddressTransactions struct {
-	Address           Address
-	Transactions      []Transaction
-	Stakes            []StakeReward
-	MasternodeRewards []MasternodeReward
+	Address      Address
+	Transactions []Transaction
+	Rewards      []Reward
 }
 
 type Transaction struct {

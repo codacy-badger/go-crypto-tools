@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/dnaeon/go-vcr/recorder"
 )
 
 const (
@@ -34,15 +36,22 @@ const (
 //API doc:  http://explorer.mastercoin.one/info
 //Explorer: http://explorer.mastercoin.one
 type API struct {
-	BaseUrl string
-	Client  *http.Client
-	Coin    string
+	BaseUrl      string
+	Client       *http.Client
+	RecordClient *http.Client
+	Coin         string
 }
 
 //InitApi initializes the client with the given base-url
-func InitApi(url string) *API {
+func InitApi(url string, rec *recorder.Recorder) *API {
 	m := API{}
 	m.BaseUrl = url
+
+	if rec != nil {
+		m.RecordClient = &http.Client{Transport: rec}
+	} else {
+		m.RecordClient = &http.Client{}
+	}
 	m.Client = &http.Client{}
 	return &m
 }
@@ -81,7 +90,7 @@ func (m *API) GetBlockCount() (d int64, err error) {
 func (m *API) GetBlockHashByIndex(index int) (s string, err error) {
 	v := url.Values{}
 	v.Set("index", strconv.Itoa(index))
-	body, err := m.get(fmt.Sprintf("%s%s?%s", m.BaseUrl, GetBlockHashByIndex, v.Encode()))
+	body, err := m.getRecorded(fmt.Sprintf("%s%s?%s", m.BaseUrl, GetBlockHashByIndex, v.Encode()))
 	if err != nil {
 		return
 	}
@@ -92,7 +101,7 @@ func (m *API) GetBlockHashByIndex(index int) (s string, err error) {
 func (m *API) GetBlockByHash(hash string) (b Block, err error) {
 	v := url.Values{}
 	v.Set("hash", hash)
-	body, err := m.get(fmt.Sprintf("%s%s?%s", m.BaseUrl, GetBlockByHash, v.Encode()))
+	body, err := m.getRecorded(fmt.Sprintf("%s%s?%s", m.BaseUrl, GetBlockByHash, v.Encode()))
 	if err != nil {
 		return
 	}
@@ -104,7 +113,7 @@ func (m *API) GetBlockByHash(hash string) (b Block, err error) {
 func (m *API) GetTransactionById(txId string, decrypt bool) (t Transaction, err error) {
 	v := url.Values{}
 	v.Set("txId", txId)
-	body, err := m.get(fmt.Sprintf("%s%s?%s&decrypt=1", m.BaseUrl, GetTransactionById, v.Encode()))
+	body, err := m.getRecorded(fmt.Sprintf("%s%s?%s&decrypt=1", m.BaseUrl, GetTransactionById, v.Encode()))
 	if err != nil {
 		return
 	}
@@ -184,6 +193,20 @@ func (m *API) GetCoin() string {
 
 func (m *API) get(url string) ([]byte, error) {
 	res, err := m.Client.Get(url)
+	if err != nil {
+		return []byte{}, err
+	}
+	body, err := ioutil.ReadAll(res.Body)
+	defer res.Body.Close()
+	if err != nil {
+		return []byte{}, err
+	}
+	return body, nil
+}
+
+// getRecorded will perform a GET request and persist response in file storage if not present
+func (g *API) getRecorded(url string) ([]byte, error) {
+	res, err := g.RecordClient.Get(url)
 	if err != nil {
 		return []byte{}, err
 	}

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/cwntr/crypto-sdk/pkg/coins/common"
+	"github.com/dnaeon/go-vcr/recorder"
 )
 
 const (
@@ -16,7 +17,15 @@ const (
 )
 
 func main() {
-	common.InitClients()
+	// Start our recorder
+	r, err := recorder.New("fixtures/staking")
+	if err != nil {
+		fmt.Printf("err: %v \n", err)
+		panic(0)
+	}
+	defer r.Stop() // Make sure recorder is stopped once done with it
+
+	common.InitClients(r)
 	sa := StakingAnalyzer{}
 	wallets := make([]Wallet, 0)
 
@@ -32,8 +41,21 @@ func main() {
 
 	sa.wallets = wallets
 	addresses := sa.GetAddresses()
-	fmt.Printf("main.addreses %+v \n", addresses)
-
+	for _, adr := range addresses {
+		sum := float64(0)
+		var dStart time.Time
+		var dEnd time.Time
+		for i, r := range adr.Rewards {
+			if i == 0 {
+				dStart = r.Time
+			}
+			if len(adr.Rewards)-1 == i {
+				dEnd = r.Time
+			}
+			sum += r.Amount
+		}
+		fmt.Printf("Address: %s | Rewards: %v | Range [%s - %s] \n", adr.Address.Address, sum, dStart.Format(time.RFC3339), dEnd.Format(time.RFC3339))
+	}
 }
 
 type Wallet struct {
@@ -66,11 +88,11 @@ func (sa StakingAnalyzer) GetAddresses() []common.AddressTransactions {
 				}
 				addr := common.ToAddrGrph(clientAdr)
 				transactions := make([]common.Transaction, 0)
-				stakes := make([]common.StakeReward, 0)
+				stakes := make([]common.Reward, 0)
 				for _, tx := range addr.LastTxs {
 					transaction, err := client.GetTransactionById(tx.Address, true)
 					if err != nil {
-						fmt.Printf("error on MC get transaction, err: %v \n", err)
+						fmt.Printf("error on GRPH get transaction, err: %v \n", err)
 						continue
 					}
 
@@ -88,7 +110,7 @@ func (sa StakingAnalyzer) GetAddresses() []common.AddressTransactions {
 							if oAddr == adr {
 								diff := out.Value - baseAmount
 								if diff > 0 && diff < 20 {
-									stakes = append(stakes, common.StakeReward{
+									stakes = append(stakes, common.Reward{
 										Address: adr,
 										Amount:  diff,
 										Time:    time.Unix(int64(cTx.BlockTime), 0),
@@ -102,7 +124,7 @@ func (sa StakingAnalyzer) GetAddresses() []common.AddressTransactions {
 				addresses = append(addresses, common.AddressTransactions{
 					Address:      addr,
 					Transactions: transactions,
-					Stakes:       stakes,
+					Rewards:      stakes,
 				})
 			}
 		case common.NameMC:
@@ -113,20 +135,45 @@ func (sa StakingAnalyzer) GetAddresses() []common.AddressTransactions {
 					fmt.Printf("err: %v \n", err)
 					continue
 				}
-
 				addr := common.ToAddrMc(clientAdr)
 				transactions := make([]common.Transaction, 0)
+				stakes := make([]common.Reward, 0)
 				for _, tx := range addr.LastTxs {
 					transaction, err := client.GetTransactionById(tx.Address, true)
 					if err != nil {
 						fmt.Printf("error on MC get transaction, err: %v \n", err)
 						continue
 					}
-					transactions = append(transactions, common.ToTxMc(transaction))
+
+					cTx := common.ToTxMc(transaction)
+					//calc stake rewards
+					var baseAmount float64
+					for _, in := range cTx.VinList {
+						if in.Address == adr {
+							baseAmount = in.Amount
+						}
+					}
+
+					for _, out := range cTx.Vout {
+						for _, oAddr := range out.ScriptPubKey.Addresses {
+							if oAddr == adr {
+								diff := out.Value - baseAmount
+								if diff > 0 && diff < 20 {
+									stakes = append(stakes, common.Reward{
+										Address: adr,
+										Amount:  diff,
+										Time:    time.Unix(int64(cTx.BlockTime), 0),
+									})
+								}
+							}
+						}
+					}
+					transactions = append(transactions, cTx)
 				}
 				addresses = append(addresses, common.AddressTransactions{
 					Address:      addr,
 					Transactions: transactions,
+					Rewards:      stakes,
 				})
 			}
 		}
