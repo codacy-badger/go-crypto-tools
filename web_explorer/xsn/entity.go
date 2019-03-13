@@ -67,6 +67,21 @@ type AddressTransactions struct {
 	Data   []AddressTransactionsItem `json:"data"`
 }
 
+type AddressTransactionsV2 struct {
+	Data []struct {
+		ID        string        `json:"id"`
+		Blockhash string        `json:"blockhash"`
+		Size      int           `json:"size"`
+		Time      int           `json:"time"`
+		Inputs    []interface{} `json:"inputs"`
+		Outputs   []struct {
+			Index int     `json:"index"`
+			Value float64 `json:"value"`
+		} `json:"outputs"`
+	} `json:"data"`
+}
+
+
 type AddressTransactionsItem struct {
 	ID        string  `json:"id"`
 	Blockhash string  `json:"blockhash"`

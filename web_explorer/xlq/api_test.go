@@ -72,12 +72,8 @@ func TestAPI_GetConnectionCount(t *testing.T) {
 		t.Fail()
 		return
 	}
-	conns, cErr := client.GetConnections()
+	_, cErr := client.GetConnections()
 	if cErr != nil {
-		t.Fail()
-		return
-	}
-	if len(conns.Data) == 0 {
 		t.Fail()
 		return
 	}

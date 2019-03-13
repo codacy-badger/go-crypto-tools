@@ -31,6 +31,9 @@ const (
 
 	GetMasternodes     = "/masternodes"
 	GetMasternodesByIP = "/masternodes/%s"
+
+	//V2
+	GetAddressTransactionsV2 = "/v2/addresses/%s/transactions"
 )
 
 //Github repo: https://github.com/X9Developer
@@ -77,6 +80,18 @@ func (x *API) GetAddress(address string) (a Address, err error) {
 //address: String, offset: Int ?= 0, limit: Int ?= 10, orderBy: String ?= ""
 func (x *API) GetAddressTransactions(address string, query url.Values) (a AddressTransactions, err error) {
 	body, err := x.get(fmt.Sprintf("%s%s?%s", x.baseUrl, fmt.Sprintf(GetAddressTransactions, address), query.Encode()))
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(body, &a)
+	return
+}
+
+//address: String, offset: Int ?= 0, limit: Int ?= 10, orderBy: String ?= ""
+func (x *API) GetAddressTransactionsV2(address string, query url.Values) (a AddressTransactionsV2, err error) {
+	url := fmt.Sprintf("%s%s?%s", x.baseUrl, fmt.Sprintf(GetAddressTransactionsV2, address), query.Encode())
+	fmt.Printf("url: %s \n", url)
+	body, err := x.get(url)
 	if err != nil {
 		return
 	}

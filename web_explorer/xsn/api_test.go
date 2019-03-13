@@ -68,6 +68,23 @@ func TestAPI_GetAddressTransactions(t *testing.T) {
 	}
 }
 
+func TestAPI_GetAddressTransactionsV2(t *testing.T) {
+	testAddress := "XgzfcNUMNomWrPMbbsgX6MqaU47fvVZKbX"
+	client := InitApi(APIUrl)
+	q := url.Values{}
+	q.Set("limit", "1")
+	addr, err := client.GetAddressTransactionsV2(testAddress, q)
+	if err != nil {
+		t.Fail()
+		fmt.Printf("err :%v", err)
+		return
+	}
+	if len(addr.Data) != 1 {
+		t.Fail()
+		return
+	}
+}
+
 func TestAPI_GetAddressTransactionsWithQuery(t *testing.T) {
 	testAddress := "Xi2xEzvFkPtuK459PYBaangiwbyGHgMHYh"
 	client := InitApi(APIUrl)
