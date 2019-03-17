@@ -7,12 +7,12 @@
 A collection of useful go clients and tools for working with several crypto currencies.
 
 ## Install
-
+> requires go v1.8+
 ```bash
 go get -u github.com/cwntr/go-crypto-tools
 ```
 
-## Crypto Currency Web Explorer implemented
+## Web Explorer implemented
 
 | Symbol | Name    |Url      | Date |
 |--------|--------|----------------------------------------|--------------|
@@ -22,7 +22,7 @@ go get -u github.com/cwntr/go-crypto-tools
 | MC     | MasterCoin|http://explorer.mastercoin.one     | 2018-11           |
 | PRTX   | Printex | https://blocks.printex.tech     | 2018-11           |
 
-## Webcrawler implemented
+## Web Crawler implemented
 
 |  Name    |Url      | Date |
 |--------   |--------|--------------------------------------------------|
