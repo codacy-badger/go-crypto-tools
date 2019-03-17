@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	ArgumentMasternodeList           = "masternode"
+	ArgumentMasternodeList       = "masternode"
 	ArgumentMasternodeListOption = "list"
 )
 

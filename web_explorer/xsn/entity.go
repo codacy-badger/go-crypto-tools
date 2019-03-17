@@ -81,7 +81,6 @@ type AddressTransactionsV2 struct {
 	} `json:"data"`
 }
 
-
 type AddressTransactionsItem struct {
 	ID        string  `json:"id"`
 	Blockhash string  `json:"blockhash"`

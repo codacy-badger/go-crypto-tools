@@ -28,4 +28,3 @@ func TestXSNMNParse(t *testing.T) {
 		return
 	}
 }
-

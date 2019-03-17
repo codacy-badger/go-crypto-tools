@@ -181,4 +181,3 @@ type LastTransaction struct {
 		} `json:"vin"`
 	} `json:"data"`
 }
-

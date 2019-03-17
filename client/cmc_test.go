@@ -1,8 +1,8 @@
 package client
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 )
 
 func TestGetMap(t *testing.T) {

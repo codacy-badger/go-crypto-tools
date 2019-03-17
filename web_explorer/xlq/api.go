@@ -37,7 +37,6 @@ const (
 	GetRichlist                    = "/richlist" //seems to be broken ATM
 )
 
-
 //Github repo: https://github.com/ALQOCRYPTO/ALQO/
 //API doc:  https://explorer.alqo.org/apiusage
 //Explorer: https://explorer.alqo.org/

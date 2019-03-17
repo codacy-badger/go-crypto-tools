@@ -4,7 +4,6 @@ import (
 	"testing"
 )
 
-
 func TestAPI_Difficulty(t *testing.T) {
 	client := InitApi(APIUrl)
 	d, err := client.GetDifficulty()
@@ -92,7 +91,6 @@ func TestAPI_TransactionById(t *testing.T) {
 		return
 	}
 }
-
 
 func TestAPI_GetLastTransaction(t *testing.T) {
 	client := InitApi(APIUrl)

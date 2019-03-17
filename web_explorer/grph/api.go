@@ -33,9 +33,9 @@ const (
 //API doc: https://explorer.graphcoin.net/api
 //Explorer: https://explorer.graphcoin.net
 type API struct {
-	BaseUrl string
-	Client  *http.Client
-	Coin    string
+	BaseUrl       string
+	Client        *http.Client
+	Coin          string
 	WaitingPeriod time.Duration
 }
 

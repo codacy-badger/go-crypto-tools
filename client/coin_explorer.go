@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	CoinExplorerWebApiExplorerMNList  = "https://www.coinexplorer.net/api/v1/XZC/masternode/list"
+	CoinExplorerWebApiExplorerMNList = "https://www.coinexplorer.net/api/v1/XZC/masternode/list"
 )
 
 type CoinExplorerMNCount struct {

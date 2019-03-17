@@ -1,10 +1,10 @@
 package xsn
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 	"testing"
-	"fmt"
 )
 
 func TestAPI_TransactionById(t *testing.T) {
